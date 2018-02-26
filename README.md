@@ -93,9 +93,9 @@ baseline:
 
 ```
 # fetch the file list (not all the files in this directory are the xml files)
-ROOT=ftp://ftp.ncbi.nlm.nih.gov/pubmed/updatefiles
+ROOT=ftp.ncbi.nlm.nih.gov/pubmed/updatefiles
 wget $ROOT
-grep -o '>pubmed.*gz' baseline | uniq |  grep -o pubmed.* | \
+grep -o '>pubmed.*gz' updatefiles | uniq |  grep -o pubmed.* | \
     xargs -n1 -I% echo $ROOT/% > filelist
 
 # fetch files 
