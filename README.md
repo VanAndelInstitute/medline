@@ -75,17 +75,17 @@ shown here: http://redisearch.io/Quick_Start/#building
 ### Medline data files
 
 You will need the Medline data files.  Here we fetch the annual baseline files by
-first fetching a list of the files we need and then downloading those files:
+first fetching a list of the files we need and then downloading those files.  We use 
+xargs to parallelize the fetch.  Don't be obnoxious by using an excessive number of 
+processes for simultaneous fetches:
 
 ```
 # fetch the file list (not all the files in this directory are the xml files)
 ROOT=ftp.ncbi.nlm.nih.gov/pubmed/baseline
 wget $ROOT
 grep -o '>pubmed.*gz' baseline | uniq |  grep -o pubmed.* | \
-    xargs -n1 -I% echo $ROOT/% > filelist
-
-# fetch files 
-wget -i filelist
+    xargs -n1 -I% echo $ROOT/% | xargs -n1 -P5 wget
+    
 ```
 
 And then we add the update files that add documents indexed since the last annual 
@@ -96,10 +96,7 @@ baseline:
 ROOT=ftp.ncbi.nlm.nih.gov/pubmed/updatefiles
 wget $ROOT
 grep -o '>pubmed.*gz' updatefiles | uniq |  grep -o pubmed.* | \
-    xargs -n1 -I% echo $ROOT/% > filelist
-
-# fetch files 
-wget -i filelist
+    xargs -n1 -I% echo $ROOT/% | xargs -n1 -P5 wget
 
 ```
 And finally decompress everything
